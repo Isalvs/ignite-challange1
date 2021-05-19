@@ -88,14 +88,14 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const { user } = request;
 
 
-  const todo = user.todos.findIndex((todo) => todo.id === id);
+  const todoPosition = user.todos.findIndex((todoPosition) => todoPosition.id === id);
 
-  if (todo < 0) return response.status(404).json({error: "Usuário não possui esta atividade"})
+  if (todoPosition < 0) return response.status(404).json({error: "Usuário não possui esta atividade"})
 
-  user.todos[todo].title = title
-  user.todos[todo].deadline = deadline
+  user.todos[todoPosition].title = title
+  user.todos[todoPosition].deadline = deadline
 
-  return response.json(user.todos[todo]);
+  return response.json(user.todos[todoPosition]);
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
@@ -103,12 +103,12 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   const { id } = request.params;
   const { user } = request;
 
-  const todo = user.todos.findIndex((todo) => todo.id === id);
+  const todoPosition = user.todos.findIndex((todo) => todo.id === id);
 
-  if (todo < 0) return response.status(404).json({error: "Usuário não possui esta atividade"});
+  if (todoPosition < 0) return response.status(404).json({error: "Usuário não possui esta atividade"});
 
-  user.todos[todo].done = true
-  return response.json(user.todos[todo]);
+  user.todos[todoPosition].done = true
+  return response.json(user.todos[todoPosition]);
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
@@ -116,10 +116,10 @@ app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
   const { id } = request.params;
   const { user } = request;
 
-  const todo = user.todos.findIndex((todo) => todo.id === id);
-  if (todo < 0) return response.status(404).json({ error: "O usuário não possui esta tarefa" });
+  const todoPosition = user.todos.findIndex((todo) => todo.id === id);
+  if (todoPosition < 0) return response.status(404).json({ error: "O usuário não possui esta tarefa" });
 
-  user.todos.splice(todo, 1);  
+  user.todos.splice(todoPosition, 1);  
   return response.sendStatus(204);
 
 });
