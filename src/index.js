@@ -65,7 +65,6 @@ app.get('/todos', checksExistsUserAccount, (request, response) => {
 
 //Feito
 app.post('/todos', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
 
   const { title, deadline } = request.body;
   const { user } = request;
@@ -83,26 +82,20 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  
   const { title, deadline } = request.body;
   const { id } = request.params;
   const { user } = request;
 
 
-  const todoData = user.todos.map( todo => todo.id);
-  const todoId = todoData.find(todo => id)
-  if (todoId) {
-    user.todos.forEach(data => {
-      if( data.id === id) {
-        data.title = title
-        data.deadline = deadline
+  const todo = user.todos.findIndex((todo) => todo.id === id);
 
-        return response.json(data);
-      }
-    });
-  } else {
-    return response.status(404).json({error: "Usuário não possui esta atividade"});
-  } 
+  if (todo < 0) return response.status(404).json({error: "Usuário não possui esta atividade"})
+
+  user.todos[todo].title = title
+  user.todos[todo].deadline = deadline
+
+  return response.json(user.todos[todo]);
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
@@ -110,43 +103,25 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   const { id } = request.params;
   const { user } = request;
 
-  const todoData = user.todos.map( todo => todo.id);
-  const todoId = todoData.find(todo => id)
-  if (todoId != id) {
-    return response.status(404).json({error: "Usuário não possui esta atividade"});
-  } else {
-    user.todos.forEach(data => {
-      if( data.id === id) {
-        data.done = true
-        return response.json(data);
-      }
-    });
-  }
+  const todo = user.todos.findIndex((todo) => todo.id === id);
+
+  if (todo < 0) return response.status(404).json({error: "Usuário não possui esta atividade"});
+
+  user.todos[todo].done = true
+  return response.json(user.todos[todo]);
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  
   const { id } = request.params;
   const { user } = request;
 
-  const todoData = user.todos.map( todo => todo.id);
-  const todoId = todoData.find(todo => id)
+  const todo = user.todos.findIndex((todo) => todo.id === id);
+  if (todo < 0) return response.status(404).json({ error: "O usuário não possui esta tarefa" });
 
-  if (todoId !== id) {
-    return response
-    .status(404)
-    .json({error: "Usuário não possui esta atividade"});
-} else {
-    user.todos.forEach(data => {
-      if( data.id === id) {
-        console.log('entrou no if')
-        user.todos.splice(data, 1);
-        return response.status(200);
-      }
-    })
-    
-  }
-  
+  user.todos.splice(todo, 1);  
+  return response.sendStatus(204);
+
 });
 
 module.exports = app;
